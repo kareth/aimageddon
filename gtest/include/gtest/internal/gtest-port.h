@@ -435,6 +435,7 @@
 # include <time.h>  // NOLINT
 #endif
 
+#define GTEST_USE_OWN_TR1_TUPLE 1
 // Determines whether Google Test can use tr1/tuple.  You can define
 // this macro to 0 to prevent Google Test from using tuple (any
 // feature depending on tuple with be disabled in this mode).
