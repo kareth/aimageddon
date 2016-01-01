@@ -10,7 +10,6 @@ option(SET_CPPLINT "Style Check" ON)
 SET(BASEPATH "${CMAKE_SOURCE_DIR}")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-#SET(gtest_SOURCE_DIR "${BASEPATH}/gtest")
 SET(gmock_SOURCE_DIR "${BASEPATH}/gmock")
 
 
@@ -21,7 +20,6 @@ enable_testing()
 
 INCLUDE_DIRECTORIES("${BASEPATH}")
 INCLUDE_DIRECTORIES("${BASEPATH}/jsoncons/src")
-#INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
@@ -37,7 +35,6 @@ add_subdirectory(games)
 add_executable(server main.cpp)
 target_link_libraries(server
   ${Boost_LIBRARIES}
-  gtest
   gmock
   gflags
   communication
