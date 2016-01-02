@@ -40,6 +40,9 @@ class SequentialLobby : public Lobby {
   // Starts a match in a separate thread.
   void StartMatch(int match_id);
 
+  // Recycles a finished match.
+  void MatchFinished(int match_id);
+
   // Assigns player to a match, removing it from list of waiting players.
   void AssignPlayerToMatch(int player_id, int match_id);
 
@@ -50,6 +53,7 @@ class SequentialLobby : public Lobby {
   int match_id_counter_ = 0;
 
   unique_ptr<MatchFactory> match_factory_;
+  std::mutex matches_mutex_;
 };
 
 #endif  // GAMES_LOBBY_H_

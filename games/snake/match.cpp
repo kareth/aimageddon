@@ -43,7 +43,7 @@ bool SnakeMatch::CheckOptionsCompatibility(const Json& match_params) {
   return options_.IsCompatible(opts);
 }
 
-void SnakeMatch::StartGame() {
+void SnakeMatch::StartGame(std::function<void()> finish_callback) {
   // TODO(pzurkowski) this is a temporary implementation just to test server and lobby
   Broadcast(MakeMessage("GameStart"));
 
@@ -56,5 +56,6 @@ void SnakeMatch::StartGame() {
     Broadcast(MakeMessage("NextTurn"));
   }
   Broadcast(MakeMessage("GameEnd"));
-  // TODO(pzurkowski) return to lobby
+
+  finish_callback();
 }

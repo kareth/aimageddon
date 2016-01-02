@@ -22,10 +22,16 @@ void SequentialLobby::WaitForJoin(int player_id) {
 }
 
 void SequentialLobby::StartMatch(int match_id) {
-  // TODO(pzurkowski) Add a callback with game end to recycle finished matches and/or
-  // recycle players back into the lobby.
+  auto finish_callback = [this, match_id]() { MatchFinished(match_id); };
   match_threads_[match_id] =
-      std::thread([this, match_id]() { matches_[match_id]->StartGame(); });
+      std::thread([this, match_id, finish_callback]() {
+          matches_[match_id]->StartGame(finish_callback);
+      });
+}
+
+void SequentialLobby::MatchFinished(int match_id) {
+  std::lock_guard<std::mutex> guard(matches_mutex_);
+  matches_.erase(match_id);
 }
 
 void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
@@ -39,6 +45,7 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
       WaitForJoin(player_id);
       // TODO(pzurkowski) what about error response?
     } else {
+      std::lock_guard<std::mutex> guard(matches_mutex_);
       int match_id = ++match_id_counter_;
       matches_[match_id] = std::move(match);
       AssignPlayerToMatch(player_id, match_id);
@@ -48,6 +55,7 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
 }
 
 bool SequentialLobby::TryJoinExistingMatch(int player_id, const Json& match_options) {
+  std::lock_guard<std::mutex> guard(matches_mutex_);
   for (auto& p : matches_) {
     auto& match_id = p.first;
     auto& match = p.second;

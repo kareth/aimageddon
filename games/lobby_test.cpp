@@ -32,7 +32,12 @@ class MatchMock : public Match {
     return num_players_ == match_options.get("num_players", Json(0)).as_int();
   }
 
-  MOCK_METHOD0(StartGame, void());
+  virtual void StartGame(std::function<void()> finish_callback) {
+    StartGameInternal();
+    finish_callback();
+  }
+
+  MOCK_METHOD0(StartGameInternal, void());
 };
 
 class MatchFactoryMock : public MatchFactory {
@@ -73,7 +78,7 @@ class SequentialLobbyTest : public testing::Test {
   void SetMatchExpectation(int num_players, GameStatus status) {
     unique_ptr<MatchMock> match(new MatchMock(num_players));
     if (status == kStarted) {
-      EXPECT_CALL(*match, StartGame()).Times(1);
+      EXPECT_CALL(*match, StartGameInternal()).Times(1);
     }
     EXPECT_CALL(*match_factory_, CreateMatch(SameNumPlayers(num_players)))
       .WillOnce(Return(ByMove(unique_ptr<Match>(match.release()))));

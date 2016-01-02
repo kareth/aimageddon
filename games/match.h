@@ -13,7 +13,7 @@ class Match {
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) = 0;
 
-  virtual void StartGame() = 0;
+  virtual void StartGame(std::function<void()> finish_callback) = 0;
 
   // Adds a player to a match.
   // If this is the last expected player, the game is automatically started

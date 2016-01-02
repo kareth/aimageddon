@@ -28,7 +28,7 @@ class SnakeMatch : public Match {
   virtual ~SnakeMatch() {}
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) override;
-  virtual void StartGame() override;
+  virtual void StartGame(std::function<void()> finish_callback) override;
 
  private:
   Options options_;
