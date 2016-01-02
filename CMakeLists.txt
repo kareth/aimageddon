@@ -28,11 +28,15 @@ include(StyleCheck)
 
 add_subdirectory(gtest)
 add_subdirectory(gflags)
+add_subdirectory(communication)
+add_subdirectory(games)
 
 add_executable(server main.cpp)
 target_link_libraries(server
   ${Boost_LIBRARIES}
   gflags
+  communication
+  games
 )
 
 add_style_check_target(server main.cpp SnakeServer)
