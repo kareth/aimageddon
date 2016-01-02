@@ -10,23 +10,23 @@ option(SET_CPPLINT "Style Check" ON)
 SET(BASEPATH "${CMAKE_SOURCE_DIR}")
 
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-SET(gtest_SOURCE_DIR "${BASEPATH}/gtest")
+SET(gmock_SOURCE_DIR "${BASEPATH}/gmock")
 
-# FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(Boost 1.54.0 COMPONENTS system filesystem thread REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
 
 enable_testing()
 
 INCLUDE_DIRECTORIES("${BASEPATH}")
 INCLUDE_DIRECTORIES("${BASEPATH}/jsoncons/src")
-INCLUDE_DIRECTORIES(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+INCLUDE_DIRECTORIES(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
 include(EnableCxx11)
 include(BuildType)
 include(StyleCheck)
 
-add_subdirectory(gtest)
+add_subdirectory(gmock)
 add_subdirectory(gflags)
 add_subdirectory(communication)
 add_subdirectory(games)

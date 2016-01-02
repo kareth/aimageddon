@@ -10,16 +10,18 @@
 
 class Lobby {
  public:
+  virtual ~Lobby() {}
   virtual void AddPlayer(unique_ptr<Player> player) = 0;
 };
 
-// Temporary implementation of example lobby.
-class SimpleLobby : public Lobby {
+// Simple lobby, assigning players sequentialy to awaiting games.
+// Whenever there is no matching game, new one is queued.
+class SequentialLobby : public Lobby {
  public:
-  SimpleLobby();
+  explicit SequentialLobby(unique_ptr<MatchFactory> match_factory);
 
   // Joins with all threads.
-  ~SimpleLobby();
+  virtual ~SequentialLobby();
 
   // Adds a player and automatically starts a single player game.
   void AddPlayer(unique_ptr<Player> p);
@@ -32,11 +34,26 @@ class SimpleLobby : public Lobby {
   // Observes a player for a join message.
   void WaitForJoin(int player_id);
 
+  // Scans existing matches for a compatible candidate, and joins if possible.
+  bool TryJoinExistingMatch(int player_id, const Json& match_options);
+
+  // Starts a match in a separate thread.
+  void StartMatch(int match_id);
+
+  // Recycles a finished match.
+  void MatchFinished(int match_id);
+
+  // Assigns player to a match, removing it from list of waiting players.
+  void AssignPlayerToMatch(int player_id, int match_id);
+
   map<int, unique_ptr<Player>> waiting_players_;
   map<int, unique_ptr<Match>> matches_;
   map<int, std::thread> match_threads_;
   int player_id_counter_ = 0;
   int match_id_counter_ = 0;
+
+  unique_ptr<MatchFactory> match_factory_;
+  std::mutex matches_mutex_;
 };
 
 #endif  // GAMES_LOBBY_H_

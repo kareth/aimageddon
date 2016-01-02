@@ -15,6 +15,7 @@ class TcpPlayer : public Player {
 
   // Expects a socket with accepted connection.
   explicit TcpPlayer(boost::asio::ip::tcp::socket socket);
+  virtual ~TcpPlayer() {}
 
   // Writes a message to a player
   virtual void Write(const Message& message) override;
