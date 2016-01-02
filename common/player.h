@@ -7,6 +7,7 @@
 class Player {
  public:
   using Callback = std::function<void(unique_ptr<Message>)>;
+  virtual ~Player() {}
 
   // Writes a message to a player.
   virtual void Write(const Message& message) = 0;

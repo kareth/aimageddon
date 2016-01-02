@@ -12,9 +12,8 @@ SET(BASEPATH "${CMAKE_SOURCE_DIR}")
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 SET(gmock_SOURCE_DIR "${BASEPATH}/gmock")
 
-
-# FIND_PACKAGE(Threads REQUIRED)
 FIND_PACKAGE(Boost 1.54.0 COMPONENTS system filesystem thread REQUIRED)
+FIND_PACKAGE(Threads REQUIRED)
 
 enable_testing()
 
@@ -35,7 +34,6 @@ add_subdirectory(games)
 add_executable(server main.cpp)
 target_link_libraries(server
   ${Boost_LIBRARIES}
-  gmock
   gflags
   communication
   games

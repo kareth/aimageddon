@@ -9,6 +9,9 @@
 class Match {
  public:
   explicit Match(int expected_players);
+  virtual ~Match() {}
+
+  virtual bool CheckOptionsCompatibility(const Json& match_options) = 0;
 
   virtual void StartGame() = 0;
 
@@ -20,7 +23,7 @@ class Match {
   bool finished() { return finished_; }
 
   // Returns true if the game has enough connected players
-  bool full() { return num_players_ = players_.size(); }
+  bool IsFull() { return num_players_ == players_.size(); }
 
   bool players() { return players_.size(); }
 
@@ -34,6 +37,12 @@ class Match {
   int num_players_;
   vector<unique_ptr<Player>> players_;
   bool finished_ = false;
+};
+
+class MatchFactory {
+ public:
+  virtual ~MatchFactory() {}
+  virtual unique_ptr<Match> CreateMatch(const Json& match_params) = 0;
 };
 
 #endif  // GAMES_MATCH_H_

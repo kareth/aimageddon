@@ -8,11 +8,14 @@
 #include <algorithm>
 #include <map>
 #include <memory>
+#include "jsoncons/json.hpp"
 
 using std::string;
 using std::vector;
 using std::pair;
 using std::map;
 using std::unique_ptr;
+
+using Json = jsoncons::json;
 
 #endif  // COMMON_DECLARATIONS_H_
