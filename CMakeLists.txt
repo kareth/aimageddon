@@ -3,7 +3,7 @@ cmake_minimum_required (VERSION 2.8.12.2)
 project (SnakeServer)
 
 option(SET_WARNINGS "Compiler warning flags" OFF)
-option(SET_DEBUG "Compiler debugging flags" OFF)
+option(SET_DEBUG "Compiler debugging flags" ON)
 option(SET_CPPLINT "Style Check" ON)
 
 # Allow absolute paths

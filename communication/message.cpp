@@ -1,11 +1,11 @@
 #include "communication/message.h"
 
-Message::Message(const jsoncons::json& content)
+Message::Message(const Json& content)
     : content_(content) {
 }
 
 Message::Message(const string& content)
-    : content_(jsoncons::json::parse_string(content)) {
+    : content_(Json::parse_string(content)) {
 }
 
 string Message::ToString() const {

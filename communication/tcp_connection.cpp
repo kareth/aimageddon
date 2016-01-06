@@ -9,6 +9,7 @@ TcpConnection::TcpConnection(tcp::socket socket)
 
 void TcpConnection::Write(const Message& message) {
   string s = message.ToString();
+  printf("sending: %s",s.c_str());
   boost::asio::write(socket_, boost::asio::buffer(s.c_str(), s.size()));
 }
 
@@ -55,11 +56,7 @@ void TcpConnection::HandleRead(const boost::system::error_code& error, size_t by
 }
 
 void TcpConnection::ProcessMessage(unique_ptr<Message> message) {
-  /* Temporary */
-  printf("MESSAGE: %s", message->ToString().c_str());
-  string ping = "{\"type\":\"ping\"}";
-  Write(Message(ping));
-  /* Temporary */
+  printf("received: %s", message->ToString().c_str());
 
   Callback callback;
   {

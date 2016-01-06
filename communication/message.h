@@ -6,7 +6,7 @@
 
 class Message {
  public:
-  explicit Message(const jsoncons::json& content);
+  explicit Message(const Json& content);
 
   // REQUIRES: content needs to be parsable to json.
   explicit Message(const string& content);
@@ -14,10 +14,12 @@ class Message {
   // Converts a message to string. Ensures a newline character at the end.
   string ToString() const;
 
-  const jsoncons::json& content() { return content_; }
+  const Json& content() const { return content_; }
+
+  string type() const { return content_.get("type", Json("")).as_string(); }
 
  private:
-  jsoncons::json content_;
+  Json content_;
 };
 
 #endif  // COMMUNICATION_MESSAGE_H_

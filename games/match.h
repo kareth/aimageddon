@@ -5,6 +5,7 @@
 #include "communication/connection.h"
 #include "communication/message.h"
 
+// TODO(pzk) add unique id
 class Match {
  public:
   virtual ~Match() {}
