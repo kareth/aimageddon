@@ -1,21 +1,21 @@
-#ifndef COMMUNICATION_TCP_PLAYER_H_
-#define COMMUNICATION_TCP_PLAYER_H_
+#ifndef COMMUNICATION_TCP_CONNECTION_H_
+#define COMMUNICATION_TCP_CONNECTION_H_
 
 #include <queue>
 
 #include "boost/asio.hpp"
 
 #include "common/declarations.h"
-#include "common/player.h"
+#include "common/connection.h"
 
 // Asynchronous TCP player.
-class TcpPlayer : public Player {
+class TcpConnection : public Connection {
  public:
   using Callback = std::function<void(unique_ptr<Message>)>;
 
   // Expects a socket with accepted connection.
-  explicit TcpPlayer(boost::asio::ip::tcp::socket socket);
-  virtual ~TcpPlayer() {}
+  explicit TcpConnection(boost::asio::ip::tcp::socket socket);
+  virtual ~TcpConnection() {}
 
   // Writes a message to a player
   virtual void Write(const Message& message) override;
@@ -53,4 +53,4 @@ class TcpPlayer : public Player {
   bool disconnected = false;
 };
 
-#endif  // COMMUNICATION_TCP_PLAYER_H_
+#endif  // COMMUNICATION_TCP_CONNECTION_H_

@@ -4,14 +4,14 @@
 #include <thread>
 
 #include "common/declarations.h"
-#include "common/player.h"
+#include "common/connection.h"
 #include "games/match.h"
 #include "games/snake/match.h"
 
 class Lobby {
  public:
   virtual ~Lobby() {}
-  virtual void AddPlayer(unique_ptr<Player> player) = 0;
+  virtual void AddPlayer(unique_ptr<Connection> player) = 0;
 };
 
 // Simple lobby, assigning players sequentialy to awaiting games.
@@ -24,7 +24,7 @@ class SequentialLobby : public Lobby {
   virtual ~SequentialLobby();
 
   // Adds a player and automatically starts a single player game.
-  void AddPlayer(unique_ptr<Player> p);
+  void AddPlayer(unique_ptr<Connection> p);
 
  private:
   // Consider join request from a player.
@@ -46,7 +46,7 @@ class SequentialLobby : public Lobby {
   // Assigns player to a match, removing it from list of waiting players.
   void AssignPlayerToMatch(int player_id, int match_id);
 
-  map<int, unique_ptr<Player>> waiting_players_;
+  map<int, unique_ptr<Connection>> waiting_players_;
   map<int, unique_ptr<Match>> matches_;
   map<int, std::thread> match_threads_;
   int player_id_counter_ = 0;

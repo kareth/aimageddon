@@ -5,7 +5,7 @@
 
 #include "common/declarations.h"
 #include "games/lobby.h"
-#include "communication/tcp_player.h"
+#include "communication/tcp_connection.h"
 
 class Server {
  public:

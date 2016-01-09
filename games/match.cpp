@@ -4,7 +4,7 @@ Match::Match(int expected_players)
   : num_players_(expected_players) {
 }
 
-void Match::AddPlayer(unique_ptr<Player> player) {
+void Match::AddPlayer(unique_ptr<Connection> player) {
   players_.push_back(std::move(player));
 }
 

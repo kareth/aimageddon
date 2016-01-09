@@ -10,7 +10,7 @@ SequentialLobby::~SequentialLobby() {
   }
 }
 
-void SequentialLobby::AddPlayer(unique_ptr<Player> p) {
+void SequentialLobby::AddPlayer(unique_ptr<Connection> p) {
   int id = ++player_id_counter_;
   waiting_players_[id] = std::move(p);
   WaitForJoin(id);

@@ -1,13 +1,13 @@
-#ifndef COMMON_PLAYER_H_
-#define COMMON_PLAYER_H_
+#ifndef COMMON_CONNECTION_H_
+#define COMMON_CONNECTION_H_
 
 #include "common/declarations.h"
 #include "communication/message.h"
 
-class Player {
+class Connection {
  public:
   using Callback = std::function<void(unique_ptr<Message>)>;
-  virtual ~Player() {}
+  virtual ~Connection() {}
 
   // Writes a message to a player.
   virtual void Write(const Message& message) = 0;
@@ -22,4 +22,4 @@ class Player {
   virtual bool active() = 0;
 };
 
-#endif  // COMMON_PLAYER_H_
+#endif  // COMMON_CONNECTION_H_

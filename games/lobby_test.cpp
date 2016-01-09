@@ -1,6 +1,6 @@
 #include "games/lobby.h"
 #include "games/match.h"
-#include "common/player.h"
+#include "common/connection.h"
 
 #include "common/declarations.h"
 #include "gtest/gtest.h"
@@ -46,10 +46,10 @@ class MatchFactoryMock : public MatchFactory {
   MOCK_METHOD1(CreateMatch, unique_ptr<Match>(const Json& json));
 };
 
-class FakePlayer : public Player {
+class FakeConnection : public Connection {
  public:
-  FakePlayer(int num_players) : num_players_(num_players) {}
-  ~FakePlayer() {}
+  FakeConnection(int num_players) : num_players_(num_players) {}
+  ~FakeConnection() {}
 
   virtual void RegisterForMessage(Callback callback) override {
     callback(MakeJoinRequest(num_players_));
@@ -63,7 +63,7 @@ class FakePlayer : public Player {
   int num_players_;
 };
 
-MATCHER_P(SameNumPlayers, num_players, "") {
+MATCHER_P(SameNumConnections, num_players, "") {
   return num_players == arg.get("num_players", Json(0)).as_int();
 }
 
@@ -80,12 +80,12 @@ class SequentialLobbyTest : public testing::Test {
     if (status == kStarted) {
       EXPECT_CALL(*match, StartGameInternal()).Times(1);
     }
-    EXPECT_CALL(*match_factory_, CreateMatch(SameNumPlayers(num_players)))
+    EXPECT_CALL(*match_factory_, CreateMatch(SameNumConnections(num_players)))
       .WillOnce(Return(ByMove(unique_ptr<Match>(match.release()))));
   }
 
   void JoinGame(int num_players) {
-    unique_ptr<Player> player(new FakePlayer(num_players));
+    unique_ptr<Connection> player(new FakeConnection(num_players));
     lobby_->AddPlayer(std::move(player));
   }
 

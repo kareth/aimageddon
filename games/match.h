@@ -2,7 +2,7 @@
 #define GAMES_MATCH_H_
 
 #include "common/declarations.h"
-#include "common/player.h"
+#include "common/connection.h"
 
 #include "communication/message.h"
 
@@ -17,7 +17,7 @@ class Match {
 
   // Adds a player to a match.
   // If this is the last expected player, the game is automatically started
-  void AddPlayer(unique_ptr<Player> player);
+  void AddPlayer(unique_ptr<Connection> player);
 
   // Returns true if the game is finished
   bool finished() { return finished_; }
@@ -35,7 +35,7 @@ class Match {
   void Publish(const Message& message);
 
   int num_players_;
-  vector<unique_ptr<Player>> players_;
+  vector<unique_ptr<Connection>> players_;
   bool finished_ = false;
 };
 
