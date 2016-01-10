@@ -4,7 +4,7 @@
 #include <thread>
 
 #include "common/declarations.h"
-#include "common/connection.h"
+#include "communication/connection.h"
 #include "games/match.h"
 #include "games/snake/match.h"
 

@@ -6,6 +6,7 @@ set(COMMUNICATION_SOURCES
 
 set(COMMUNICATION_HEADERS
   server.h
+  connection.h
   tcp_connection.h
   message.h
 )

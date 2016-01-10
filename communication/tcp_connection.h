@@ -6,7 +6,7 @@
 #include "boost/asio.hpp"
 
 #include "common/declarations.h"
-#include "common/connection.h"
+#include "communication/connection.h"
 
 // Asynchronous TCP player.
 class TcpConnection : public Connection {
@@ -29,7 +29,9 @@ class TcpConnection : public Connection {
   //    and consumes it. The call is executed from the thread calling this method.
   // 2) If no messages are waiting, queues the callback. Once the message is received,
   //    calls the callback with the thread that received it and consumes the message.
-  virtual void RegisterForMessage(Callback callback) override;
+  //
+  // TODO(pzk) Ensure that the callback is called from different thread.
+  virtual void ReadMessageAsync(Callback callback) override;
 
   virtual bool active() override { return !disconnected; }
 

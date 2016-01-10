@@ -21,7 +21,7 @@ unique_ptr<Message> TcpConnection::Read() {
   return msg;
 }
 
-void TcpConnection::RegisterForMessage(Callback callback) {
+void TcpConnection::ReadMessageAsync(Callback callback) {
   unique_ptr<Message> message = nullptr;
   {
     std::lock_guard<std::mutex> guard(mutex_);

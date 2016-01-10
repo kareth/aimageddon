@@ -2,8 +2,7 @@
 #define GAMES_SNAKE_MATCH_H_
 
 #include "common/declarations.h"
-
-#include "games/match.h"
+#include "games/round_based/match.h"
 
 class SnakeMatchFactory : public MatchFactory {
  public:
@@ -12,7 +11,7 @@ class SnakeMatchFactory : public MatchFactory {
   virtual unique_ptr<Match> CreateMatch(const Json& match_params) override;
 };
 
-class SnakeMatch : public Match {
+class SnakeMatch : public RoundBasedMatch {
  public:
   struct Options {
     // Returns 0 if the parse is correct, 1 if error.

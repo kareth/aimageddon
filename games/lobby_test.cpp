@@ -1,8 +1,9 @@
 #include "games/lobby.h"
-#include "games/match.h"
-#include "common/connection.h"
 
 #include "common/declarations.h"
+#include "communication/connection.h"
+#include "games/match.h"
+
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
@@ -25,11 +26,11 @@ enum GameStatus {
 
 class MatchMock : public Match {
  public:
-  MatchMock(int expected_players) : Match(expected_players) {}
+  MatchMock(int expected_players) : expected_players_(expected_players) {}
   virtual ~MatchMock() {}
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) override{
-    return num_players_ == match_options.get("num_players", Json(0)).as_int();
+    return expected_players_ == match_options.get("num_players", Json(0)).as_int();
   }
 
   virtual void StartGame(std::function<void()> finish_callback) {
@@ -37,7 +38,13 @@ class MatchMock : public Match {
     finish_callback();
   }
 
+  virtual void AddPlayer(unique_ptr<Connection> player) { num_players_++; }
+  virtual bool is_full() { return num_players_ == expected_players_; }
+
   MOCK_METHOD0(StartGameInternal, void());
+ private:
+  int expected_players_;
+  int num_players_ = 0;
 };
 
 class MatchFactoryMock : public MatchFactory {
@@ -51,7 +58,7 @@ class FakeConnection : public Connection {
   FakeConnection(int num_players) : num_players_(num_players) {}
   ~FakeConnection() {}
 
-  virtual void RegisterForMessage(Callback callback) override {
+  virtual void ReadMessageAsync(Callback callback) override {
     callback(MakeJoinRequest(num_players_));
   };
 

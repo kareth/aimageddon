@@ -17,7 +17,7 @@ void SequentialLobby::AddPlayer(unique_ptr<Connection> p) {
 }
 
 void SequentialLobby::WaitForJoin(int player_id) {
-  waiting_players_[player_id]->RegisterForMessage(std::bind(
+  waiting_players_[player_id]->ReadMessageAsync(std::bind(
         &SequentialLobby::JoinRequest, this, player_id, std::placeholders::_1));
 }
 
@@ -49,7 +49,7 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
       int match_id = ++match_id_counter_;
       matches_[match_id] = std::move(match);
       AssignPlayerToMatch(player_id, match_id);
-      if (matches_[match_id]->IsFull()) StartMatch(match_id);
+      if (matches_[match_id]->is_full()) StartMatch(match_id);
     }
   }
 }
@@ -59,9 +59,9 @@ bool SequentialLobby::TryJoinExistingMatch(int player_id, const Json& match_opti
   for (auto& p : matches_) {
     auto& match_id = p.first;
     auto& match = p.second;
-    if (!match->IsFull() && match->CheckOptionsCompatibility(match_options)) {
+    if (!match->is_full() && match->CheckOptionsCompatibility(match_options)) {
       AssignPlayerToMatch(player_id, match_id);
-      if (match->IsFull()) StartMatch(match_id);
+      if (match->is_full()) StartMatch(match_id);
       return true;
     }
   }
