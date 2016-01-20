@@ -1,18 +1,18 @@
-#include "communication/tcp_player.h"
+#include "communication/tcp_connection.h"
 
 using boost::asio::ip::tcp;
 
-TcpPlayer::TcpPlayer(tcp::socket socket)
+TcpConnection::TcpConnection(tcp::socket socket)
     : socket_(std::move(socket)) {
   ReadMessage();
 }
 
-void TcpPlayer::Write(const Message& message) {
+void TcpConnection::Write(const Message& message) {
   string s = message.ToString();
   boost::asio::write(socket_, boost::asio::buffer(s.c_str(), s.size()));
 }
 
-unique_ptr<Message> TcpPlayer::Read() {
+unique_ptr<Message> TcpConnection::Read() {
   std::lock_guard<std::mutex> guard(mutex_);
   if (messages_.size() == 0) return nullptr;
 
@@ -21,7 +21,7 @@ unique_ptr<Message> TcpPlayer::Read() {
   return msg;
 }
 
-void TcpPlayer::RegisterForMessage(Callback callback) {
+void TcpConnection::ReadMessageAsync(Callback callback) {
   unique_ptr<Message> message = nullptr;
   {
     std::lock_guard<std::mutex> guard(mutex_);
@@ -35,12 +35,12 @@ void TcpPlayer::RegisterForMessage(Callback callback) {
   if (message != nullptr) callback(std::move(message));
 }
 
-void TcpPlayer::ReadMessage() {
+void TcpConnection::ReadMessage() {
   boost::asio::async_read_until(socket_, buffer_, '\n',
-    std::bind(&TcpPlayer::HandleRead, this, std::placeholders::_1, std::placeholders::_2));
+    std::bind(&TcpConnection::HandleRead, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-void TcpPlayer::HandleRead(const boost::system::error_code& error, size_t bytes) {
+void TcpConnection::HandleRead(const boost::system::error_code& error, size_t bytes) {
   if (!error) {
     std::istream is(&buffer_);
     string message;
@@ -54,7 +54,7 @@ void TcpPlayer::HandleRead(const boost::system::error_code& error, size_t bytes)
   }
 }
 
-void TcpPlayer::ProcessMessage(unique_ptr<Message> message) {
+void TcpConnection::ProcessMessage(unique_ptr<Message> message) {
   /* Temporary */
   printf("MESSAGE: %s", message->ToString().c_str());
   string ping = "{\"type\":\"ping\"}";

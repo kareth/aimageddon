@@ -33,7 +33,7 @@ Message MakeMessage(const string& type) {
 }  // namespace
 
 SnakeMatch::SnakeMatch(const Options& options)
-  : Match(options.num_players), options_(options) {
+  : RoundBasedMatch(options.num_players), options_(options) {
 }
 
 bool SnakeMatch::CheckOptionsCompatibility(const Json& match_params) {
@@ -47,12 +47,10 @@ void SnakeMatch::StartGame(std::function<void()> finish_callback) {
   // TODO(pzurkowski) this is a temporary implementation just to test server and lobby
   Broadcast(MakeMessage("GameStart"));
 
-  int num_turns = 10;
-  while (num_turns--) {
+  int num_rounds = 10;
+  for (int round = 0; round < num_rounds; round++) {
     usleep(1000000);
-    for (auto& player : players_) {
-      auto msg = player->Read();
-    }
+    auto messages = WaitForMessages(round, std::chrono::milliseconds(1000));
     Broadcast(MakeMessage("NextTurn"));
   }
   Broadcast(MakeMessage("GameEnd"));

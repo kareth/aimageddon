@@ -13,9 +13,10 @@ set(GAMES_TESTS
 )
 
 add_subdirectory(snake)
+add_subdirectory(round_based)
 
 add_library(games ${GAMES_SOURCES})
-target_link_libraries(games snake)
+target_link_libraries(games snake round_based)
 
 add_style_check_target(games "${GAMES_SOURCES}" SnakeServer)
 add_style_check_target(games "${GAMES_HEADERS}" SnakeServer)

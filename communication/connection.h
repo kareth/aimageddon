@@ -1,13 +1,13 @@
-#ifndef COMMON_PLAYER_H_
-#define COMMON_PLAYER_H_
+#ifndef COMMUNICATION_CONNECTION_H_
+#define COMMUNICATION_CONNECTION_H_
 
 #include "common/declarations.h"
 #include "communication/message.h"
 
-class Player {
+class Connection {
  public:
   using Callback = std::function<void(unique_ptr<Message>)>;
-  virtual ~Player() {}
+  virtual ~Connection() {}
 
   // Writes a message to a player.
   virtual void Write(const Message& message) = 0;
@@ -17,9 +17,9 @@ class Player {
   virtual unique_ptr<Message> Read() = 0;
 
   // Registers an observer for a message. Calls callback once message appears.
-  virtual void RegisterForMessage(Callback callback) = 0;
+  virtual void ReadMessageAsync(Callback callback) = 0;
 
   virtual bool active() = 0;
 };
 
-#endif  // COMMON_PLAYER_H_
+#endif  // COMMUNICATION_CONNECTION_H_

@@ -1,8 +1,9 @@
 #include "games/lobby.h"
-#include "games/match.h"
-#include "common/player.h"
 
 #include "common/declarations.h"
+#include "communication/connection.h"
+#include "games/match.h"
+
 #include "gtest/gtest.h"
 #include "gmock/gmock.h"
 
@@ -25,11 +26,11 @@ enum GameStatus {
 
 class MatchMock : public Match {
  public:
-  MatchMock(int expected_players) : Match(expected_players) {}
+  MatchMock(int expected_players) : expected_players_(expected_players) {}
   virtual ~MatchMock() {}
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) override{
-    return num_players_ == match_options.get("num_players", Json(0)).as_int();
+    return expected_players_ == match_options.get("num_players", Json(0)).as_int();
   }
 
   virtual void StartGame(std::function<void()> finish_callback) {
@@ -37,7 +38,13 @@ class MatchMock : public Match {
     finish_callback();
   }
 
+  virtual void AddPlayer(unique_ptr<Connection> player) { num_players_++; }
+  virtual bool is_full() { return num_players_ == expected_players_; }
+
   MOCK_METHOD0(StartGameInternal, void());
+ private:
+  int expected_players_;
+  int num_players_ = 0;
 };
 
 class MatchFactoryMock : public MatchFactory {
@@ -46,12 +53,12 @@ class MatchFactoryMock : public MatchFactory {
   MOCK_METHOD1(CreateMatch, unique_ptr<Match>(const Json& json));
 };
 
-class FakePlayer : public Player {
+class FakeConnection : public Connection {
  public:
-  FakePlayer(int num_players) : num_players_(num_players) {}
-  ~FakePlayer() {}
+  FakeConnection(int num_players) : num_players_(num_players) {}
+  ~FakeConnection() {}
 
-  virtual void RegisterForMessage(Callback callback) override {
+  virtual void ReadMessageAsync(Callback callback) override {
     callback(MakeJoinRequest(num_players_));
   };
 
@@ -63,7 +70,7 @@ class FakePlayer : public Player {
   int num_players_;
 };
 
-MATCHER_P(SameNumPlayers, num_players, "") {
+MATCHER_P(SameNumConnections, num_players, "") {
   return num_players == arg.get("num_players", Json(0)).as_int();
 }
 
@@ -80,12 +87,12 @@ class SequentialLobbyTest : public testing::Test {
     if (status == kStarted) {
       EXPECT_CALL(*match, StartGameInternal()).Times(1);
     }
-    EXPECT_CALL(*match_factory_, CreateMatch(SameNumPlayers(num_players)))
+    EXPECT_CALL(*match_factory_, CreateMatch(SameNumConnections(num_players)))
       .WillOnce(Return(ByMove(unique_ptr<Match>(match.release()))));
   }
 
   void JoinGame(int num_players) {
-    unique_ptr<Player> player(new FakePlayer(num_players));
+    unique_ptr<Connection> player(new FakeConnection(num_players));
     lobby_->AddPlayer(std::move(player));
   }
 

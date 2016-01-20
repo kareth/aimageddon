@@ -20,8 +20,8 @@ void Server::StartAccept() {
 void Server::HandleAccept(tcp::socket* socket, const boost::system::error_code& error) {
   if (!error) {
     // TODO(pzurkowski) Use PlayerFactory here.
-    unique_ptr<Player> player(new TcpPlayer(std::move(*socket)));
-    lobby_->AddPlayer(std::move(player));
+    unique_ptr<Connection> connection(new TcpConnection(std::move(*socket)));
+    lobby_->AddPlayer(std::move(connection));
   } else {
     delete socket;
   }

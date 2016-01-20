@@ -1,12 +1,13 @@
 set(COMMUNICATION_SOURCES
   server.cpp
-  tcp_player.cpp
+  tcp_connection.cpp
   message.cpp
 )
 
 set(COMMUNICATION_HEADERS
   server.h
-  tcp_player.h
+  connection.h
+  tcp_connection.h
   message.h
 )
 
