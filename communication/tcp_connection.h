@@ -15,7 +15,7 @@ class TcpConnection : public Connection {
 
   // Expects a socket with accepted connection.
   explicit TcpConnection(boost::asio::ip::tcp::socket socket);
-  virtual ~TcpConnection() {}
+  virtual ~TcpConnection();
 
   // Writes a message to a player
   virtual void Write(const Message& message) override;
@@ -33,7 +33,7 @@ class TcpConnection : public Connection {
   // TODO(pzk) Ensure that the callback is called from different thread.
   virtual void ReadMessageAsync(Callback callback) override;
 
-  virtual bool active() override { return !disconnected; }
+  virtual bool active() override { return !disconnected_; }
 
  private:
   // Starts an async read on the socket.
@@ -48,11 +48,17 @@ class TcpConnection : public Connection {
   boost::asio::ip::tcp::socket socket_;
   boost::asio::streambuf buffer_;
 
-  std::mutex mutex_;
+  // Used to synchronize access to both queues
+  std::mutex queue_mutex_;
   std::queue<Callback> observers_;
   std::queue<unique_ptr<Message>> messages_;
 
-  bool disconnected = false;
+  // Used to synchronize destroying the object with executing last read handler
+  std::mutex read_handle_mutex_;
+  std::condition_variable read_performed_;
+  bool should_continue_reading_ = true;
+
+  bool disconnected_ = false;
 };
 
 #endif  // COMMUNICATION_TCP_CONNECTION_H_

@@ -31,12 +31,14 @@ void SequentialLobby::StartMatch(int match_id) {
 
 void SequentialLobby::MatchFinished(int match_id) {
   std::lock_guard<std::mutex> guard(matches_mutex_);
+  printf("Erasing match %d\n", match_id);
   matches_.erase(match_id);
 }
 
 void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
   if (message->content().get("type") != "join_game") {
     WaitForJoin(player_id);
+    return;
   }
   auto match_options = message->content().get("data", jsoncons::json(""));
   if (!TryJoinExistingMatch(player_id, match_options)) {

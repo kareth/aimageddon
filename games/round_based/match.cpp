@@ -25,6 +25,7 @@ vector<unique_ptr<Message>> RoundBasedMatch::WaitForMessages(
   vector<unique_ptr<Message>> messages;
   for (auto& future_message : future_messages) {
     if (future_message.wait_until(timeout) == std::future_status::timeout) {
+      printf("Missed move from player %d\n", int(messages.size()));
       messages.push_back(nullptr);
     } else {
       messages.push_back(future_message.get());

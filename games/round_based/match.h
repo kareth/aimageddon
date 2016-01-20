@@ -23,8 +23,11 @@ class RoundBasedMatch : public Match {
   virtual bool is_full() override { return players_.size() == num_players_; }
 
  protected:
+  // Sends given message to all players
   void Broadcast(const Message& message);
 
+  // Waits UP TO time_span millisecond for messages with given round from all
+  // players. If no such message is received nullptr is assigned.
   vector<unique_ptr<Message>> WaitForMessages(
       int round, std::chrono::milliseconds time_span);
 
