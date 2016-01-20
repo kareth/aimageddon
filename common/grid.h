@@ -14,8 +14,10 @@ struct Point {
  bool operator< (const Point& rhs) const {
    return std::tie(x, y) < std::tie(rhs.x, rhs.y);
  }
+ bool operator== (const Point& rhs) const {
+   return std::tie(x, y) == std::tie(rhs.x, rhs.y);
+ }
 
- // TODO consider moving those outside of this class.
  // Rotates point around origin 90 degrees left
  void RotateLeft() { y = -y; std::swap(x, y); }
 
@@ -28,8 +30,8 @@ class Grid {
  public:
   Grid(int x, int y, T val) : x_(x), y_(y), grid_(y, vector<T>(x, val)) {}
   Grid(int x, int y) : x_(x), y_(y), grid_(y, vector<T>(x)) {}
-  T& operator[] (const Point& p) { return grid_[p.x][p.y]; }
-  const T& at(const Point& p) const { return grid_[p.x][p.y]; }
+  T& operator[] (const Point& p) { return grid_[p.y][p.x]; }
+  const T& at(const Point& p) const { return grid_[p.y][p.x]; }
   bool Inside(const Point& p) const { return p.x >= 0 && p.x < x_ && p.y >= 0 && p.y < y_; }
  private:
   int x_, y_;

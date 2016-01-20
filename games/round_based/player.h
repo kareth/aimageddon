@@ -11,9 +11,11 @@
 class RoundBasedPlayer {
  public:
   explicit RoundBasedPlayer(unique_ptr<Connection> connection);
+  virtual ~RoundBasedPlayer() {}
 
   void Write(const Message& m) { connection_->Write(m); }
 
+  // Returns a future referring to a message with given "round" set
   std::future<unique_ptr<Message>> GetRoundMessageAsync(int round);
 
  private:

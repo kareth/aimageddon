@@ -58,10 +58,10 @@ GAME STATUS MESSAGE:
         position: {x:5, y:5}
       }, {
         type: death
-        player_name: payername
+        player: payer_index
       }, {
         type: apple_consumption
-        player_name: playername
+        player: player_index
       }
     ]
   }
@@ -76,7 +76,7 @@ GAME_END MESSAGE:
     winner: player_name
     scores: [
       {
-        player_name: name
+        player: player_index
         max_length: 102
         deaths: 0
        }

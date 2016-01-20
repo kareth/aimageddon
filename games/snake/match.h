@@ -16,6 +16,22 @@ class SnakeMatchFactory : public MatchFactory {
   virtual unique_ptr<Match> CreateMatch(const Json& match_params) override;
 };
 
+struct Snake {
+  int id;
+  bool dead = false;
+  std::deque<Point> points;
+  Point direction;
+
+  void ShortenTail() {
+    recently_removed_point_ = points.back();
+    points.pop_back();
+  }
+  void RestoreTail() { points.push_back(recently_removed_point_); }
+
+ private:
+  Point recently_removed_point_;
+};
+
 class SnakeMatch : public RoundBasedMatch {
  public:
   struct Options {
@@ -29,10 +45,12 @@ class SnakeMatch : public RoundBasedMatch {
     int x = 15;
     int y = 15;
     int starting_length = 4;
-    int max_turns = 20;
+    int max_turns = 40;
     int turns_to_starve = 0;
     int action_time = 1000;
   };
+
+  enum Action { kLeft, kRight, kForward };
 
   explicit SnakeMatch(const Options& options);
   virtual ~SnakeMatch() {}
@@ -41,29 +59,21 @@ class SnakeMatch : public RoundBasedMatch {
   virtual void StartGame(std::function<void()> finish_callback) override;
 
  private:
-  enum Action { kLeft, kRight, kForward };
   enum SpecialFields { kEmpty = -1, kApple = -2 };
-  struct Snake {
-    bool dead = false;
-    std::deque<Point> points;
-    Point direction;
-  };
 
   // Generates initial snakes positions.
   // Each snake is generated as a line parallel to one edge of the map.
   // It starts in the corner, 1 tile off the edges, and spans across one direction.
   void SpawnSnakes();
-  bool TestEndGame();
+  void ProcessTurn(const vector<Action>& actions);
+  bool IsGameFinished();
+
+  void KillSnake(int snake_id);
+  void AppleEaten(int snake_id);
 
   Message MakeGameStart();
-  Message MakeGameEnd();
   Message MakeGameStatus();
-  vector<SnakeMatch::Action> FetchActions();
-  void ProcessTurn(const vector<Action>& actions);
-  Action ParseAction(const Message& message);
-
-  // Temporary method to deal with recording games, before actual pubsub is setup
-  Message Record(Message m) { game_log_.push_back(m); return m; }
+  Message MakeGameEnd();
 
   int current_turn_ = 1;
   Grid<int> board_;

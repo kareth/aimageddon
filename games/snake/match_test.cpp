@@ -1,5 +1,5 @@
 #include "games/snake/match.h"
-#include "common/player.h"
+#include "communication/connection.h"
 
 #include "common/declarations.h"
 #include "gtest/gtest.h"

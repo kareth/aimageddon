@@ -8,7 +8,8 @@
 // TODO(pzk) add unique id
 class Match {
  public:
-  virtual ~Match() {}
+  Match();
+  virtual ~Match();
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) = 0;
 
@@ -19,6 +20,11 @@ class Match {
   virtual bool is_full() = 0;
 
   virtual void Publish(const Message& message);
+
+ private:
+  // TODO(pzk) replace with redis channel
+  FILE* log_file_ = nullptr;
+  int written_ = 0;  // Temporary
 };
 
 class MatchFactory {
