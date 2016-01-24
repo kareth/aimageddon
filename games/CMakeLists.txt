@@ -22,5 +22,5 @@ add_style_check_target(games "${GAMES_SOURCES}" SnakeServer)
 add_style_check_target(games "${GAMES_HEADERS}" SnakeServer)
 
 add_executable(games_tests ${GAMES_TESTS})
-target_link_libraries(games_tests games communication gmock gtest gtest_main)
+target_link_libraries(games_tests games communication gmock gtest gtest_main cpp_redis)
 add_test(games_tests games_tests)

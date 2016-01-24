@@ -3,13 +3,13 @@
 
 #include "common/declarations.h"
 #include "communication/connection.h"
+#include "communication/game_logger.h"
 #include "communication/message.h"
 
-// TODO(pzk) add unique id
 class Match {
  public:
   Match();
-  virtual ~Match();
+  virtual ~Match() {}
 
   virtual bool CheckOptionsCompatibility(const Json& match_options) = 0;
 
@@ -19,12 +19,13 @@ class Match {
 
   virtual bool is_full() = 0;
 
-  virtual void Publish(const Message& message);
+  void AddLogger(unique_ptr<GameLogger> logger) { logger_ = std::move(logger); }
+
+ protected:
+  void Log(const Message& message) { if (logger_) logger_->Log(message); }
 
  private:
-  // TODO(pzk) replace with redis channel
-  FILE* log_file_ = nullptr;
-  int written_ = 0;  // Temporary
+  unique_ptr<GameLogger> logger_;
 };
 
 class MatchFactory {

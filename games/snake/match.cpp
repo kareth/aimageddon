@@ -181,7 +181,7 @@ void SnakeMatch::StartGame(std::function<void()> finish_callback) {
 
   auto start = MakeGameStart();
   Broadcast(start);
-  Publish(start);
+  Log(start);
 
   for (int turn = 1; turn <= options_.max_turns && !IsGameFinished(); turn++) {
     auto actions = ParseActions(
@@ -190,13 +190,13 @@ void SnakeMatch::StartGame(std::function<void()> finish_callback) {
     ProcessTurn(actions);
 
     auto game_status = MakeGameStatus();
-    Publish(game_status);
+    Log(game_status);
     if (!IsGameFinished() && turn != options_.max_turns)
       Broadcast(game_status);
   }
   auto end = MakeGameEnd();
   Broadcast(end);
-  Publish(end);
+  Log(end);
 
   finish_callback();
 }

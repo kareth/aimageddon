@@ -1,7 +1,9 @@
 #include "games/lobby.h"
 
-SequentialLobby::SequentialLobby(unique_ptr<MatchFactory> match_factory)
-    : match_factory_(std::move(match_factory)) {
+SequentialLobby::SequentialLobby(unique_ptr<MatchFactory> match_factory,
+                                 unique_ptr<GameLoggerFactory> game_logger_factory)
+    : match_factory_(std::move(match_factory)),
+      game_logger_factory_(std::move(game_logger_factory)) {
 }
 
 SequentialLobby::~SequentialLobby() {
@@ -42,6 +44,7 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
   }
   auto match_options = message->content().get("data", jsoncons::json(""));
   if (!TryJoinExistingMatch(player_id, match_options)) {
+    // TODO(pzk) create logger here (with mutexed id)
     auto match = match_factory_->CreateMatch(match_options);
     if (match == nullptr) {
       WaitForJoin(player_id);
@@ -49,6 +52,10 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
     } else {
       std::lock_guard<std::mutex> guard(matches_mutex_);
       int match_id = ++match_id_counter_;
+
+      // TODO(pzk) this is ugly
+      match->AddLogger(game_logger_factory_->Create(match_id));
+
       matches_[match_id] = std::move(match);
       AssignPlayerToMatch(player_id, match_id);
       if (matches_[match_id]->is_full()) StartMatch(match_id);

@@ -16,5 +16,6 @@ add_style_check_target(snake "${SNAKE_SOURCES}" SnakeServer)
 add_style_check_target(snake "${SNAKE_HEADERS}" SnakeServer)
 
 add_executable(snake_tests ${SNAKE_TESTS})
-target_link_libraries(snake_tests snake communication gmock gtest gtest_main)
+target_link_libraries(snake_tests snake communication gmock gtest gtest_main cpp_redis)
+
 add_test(snake_tests snake_tests)

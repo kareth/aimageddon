@@ -74,12 +74,23 @@ MATCHER_P(SameNumConnections, num_players, "") {
   return num_players == arg.get("num_players", Json(0)).as_int();
 }
 
+class FakeLoggerFactory : public GameLoggerFactory {
+ public:
+  virtual unique_ptr<GameLogger> Create(int game_id) override {
+    class NoOpGameLogger : public GameLogger {
+     public: virtual void Log(const Message& message) override {}
+    };
+    return unique_ptr<GameLogger>(new NoOpGameLogger());
+  }
+};
+
 class SequentialLobbyTest : public testing::Test {
  public:
   void SetUp() {
     unique_ptr<MatchFactoryMock> match_factory(new MatchFactoryMock());
     match_factory_ = match_factory.get();
-    lobby_.reset(new SequentialLobby(unique_ptr<MatchFactory>(match_factory.release())));
+    lobby_.reset(new SequentialLobby(unique_ptr<MatchFactory>(match_factory.release()),
+                                     unique_ptr<FakeLoggerFactory>(new FakeLoggerFactory)));
   }
 
   void SetMatchExpectation(int num_players, GameStatus status) {

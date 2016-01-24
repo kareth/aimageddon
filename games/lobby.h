@@ -5,6 +5,7 @@
 
 #include "common/declarations.h"
 #include "communication/connection.h"
+#include "communication/game_logger.h"
 #include "games/match.h"
 #include "games/snake/match.h"
 
@@ -18,7 +19,8 @@ class Lobby {
 // Whenever there is no matching game, new one is queued.
 class SequentialLobby : public Lobby {
  public:
-  explicit SequentialLobby(unique_ptr<MatchFactory> match_factory);
+  explicit SequentialLobby(unique_ptr<MatchFactory> match_factory,
+                           unique_ptr<GameLoggerFactory> game_logger_factory);
 
   // Joins with all threads.
   virtual ~SequentialLobby();
@@ -54,6 +56,8 @@ class SequentialLobby : public Lobby {
 
   unique_ptr<MatchFactory> match_factory_;
   std::mutex matches_mutex_;
+
+  unique_ptr<GameLoggerFactory> game_logger_factory_;
 };
 
 #endif  // GAMES_LOBBY_H_
