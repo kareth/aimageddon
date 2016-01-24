@@ -19,6 +19,7 @@ enable_testing()
 
 INCLUDE_DIRECTORIES("${BASEPATH}")
 INCLUDE_DIRECTORIES("${BASEPATH}/jsoncons/src")
+INCLUDE_DIRECTORIES("${BASEPATH}/cpp_redis/includes")
 INCLUDE_DIRECTORIES(${gmock_SOURCE_DIR}/include ${gmock_SOURCE_DIR})
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIR})
 
@@ -30,6 +31,7 @@ add_subdirectory(gmock)
 add_subdirectory(gflags)
 add_subdirectory(communication)
 add_subdirectory(games)
+add_subdirectory(cpp_redis)
 
 add_executable(server main.cpp)
 target_link_libraries(server
@@ -37,6 +39,7 @@ target_link_libraries(server
   gflags
   communication
   games
+  cpp_redis
 )
 
 add_style_check_target(server main.cpp SnakeServer)
