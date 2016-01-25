@@ -11,7 +11,7 @@
 class RoundBasedPlayer {
  public:
   explicit RoundBasedPlayer(unique_ptr<Connection> connection);
-  virtual ~RoundBasedPlayer() {}
+  virtual ~RoundBasedPlayer();
 
   void Write(const Message& m) { connection_->Write(m); }
 
@@ -22,8 +22,10 @@ class RoundBasedPlayer {
   void ProcessMessage(unique_ptr<Message> message);
   void WaitForMessageAsync();
 
-  vector<unique_ptr<Message>> waiting_messages_;
+  std::mutex mtx_;
   std::map<int, std::promise<unique_ptr<Message>>> waiting_rounds_;
+
+  vector<unique_ptr<Message>> waiting_messages_;
 
   unique_ptr<Connection> connection_;
 };

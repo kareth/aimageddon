@@ -270,6 +270,6 @@ Message SnakeMatch::MakeGameStatus() {
   data["positions"] = positions;
   data["events"] = events;
   Json base = MakeBase("game_status", data);
-  base["turn"] = current_turn_;
+  base["round"] = current_turn_;
   return Message(base);
 }

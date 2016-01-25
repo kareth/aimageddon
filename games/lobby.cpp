@@ -51,6 +51,8 @@ void SequentialLobby::JoinRequest(int player_id, unique_ptr<Message> message) {
       // TODO(pzurkowski) what about error response?
     } else {
       std::lock_guard<std::mutex> guard(matches_mutex_);
+      // TODO(pzk) Handle id's better. In current scenario restarting the
+      // server would make it possible for id's to overlap.
       int match_id = ++match_id_counter_;
 
       // TODO(pzk) this is ugly
